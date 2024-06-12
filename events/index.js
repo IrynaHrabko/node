@@ -31,11 +31,11 @@ myEmitter.on('sendEmail', (...arg) => {
     console.log('sendEmail', ...arg)
 })
 
-for (let i = 0; i < 10; i++) {
-    setTimeout(() => {
-        console.log(i);
-    }, i * 100);
-}
+// for (let i = 0; i < 10; i++) {
+//     setTimeout(() => {
+//         console.log(i);
+//     }, i * 100);
+// }
 
 module.exports = {
     myEmitter,
