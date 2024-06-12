@@ -1,35 +1,37 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
+const path = require('path');
+const app = express();
+const port = 8080;
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
 const getRandomDelay = () => {
-    return Math.floor(Math.random() * 2000) + 1000;
+    return (Math.random() * 2 + 1).toFixed(1);
 };
 
 const shouldReturnError = () => {
     return Math.random() < 0.1;
 };
 
-const server = http.createServer((req, res) => {
+app.get('/', (req, res) => {
     const delay = getRandomDelay();
-    
+
     setTimeout(() => {
         if (shouldReturnError()) {
-            res.statusCode = 500;
-            res.setHeader('Content-Type', 'text/plain');
-            res.end('Internal Server Error');
+            res.status(500).render('error', { delay });
         } else {
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'text/html');
-            const readStream = fs.createReadStream('index.html');
-            readStream.pipe(res);
+            res.status(200).render('index', { delay });
         }
-    }, delay);
+    }, delay * 1000);
 });
 
-const port = 8080;
+app.use((req, res, next) => {
+    res.status(404).send('Sorry, page not found');
+});
 
-server.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}/`);
 });
 
 const handleShutdown = () => {
